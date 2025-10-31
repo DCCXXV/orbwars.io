@@ -1,4 +1,4 @@
-import { Application, Container, Graphics } from "pixi.js";
+import { Application, Container, Graphics, Text } from "pixi.js";
 
 const app = new Application();
 await app.init({
@@ -16,7 +16,7 @@ app.stage.addChild(world);
 
 const grid = new Graphics();
 
-const worldSize = 4000;
+const worldSize = 8000;
 const gridSize = 40;
 
 for (let x = -worldSize; x < worldSize; x += gridSize) {
@@ -32,13 +32,49 @@ grid.stroke({ width: 1, color: 0xccccff, alpha: 0.5 });
 
 world.addChild(grid);
 
-const player = new Graphics().circle(0, 0, 40).fill(0xffffff).stroke({
+let playerSize = 40;
+
+const player = new Graphics().circle(0, 0, playerSize).fill(0xffffff).stroke({
     width: 2,
     color: 0x666666,
 });
 
 player.position.set(app.screen.width / 2, app.screen.height / 2);
 world.addChild(player);
+
+const pellets = [];
+const pelletCount = worldSize / 2;
+
+const pelletSize = 5;
+
+function spawnPellet() {
+    const pellet = new Graphics().circle(0, 0, pelletSize).fill(0x666666);
+
+    pellet.x = (Math.random() - 0.5) * worldSize * 2;
+    pellet.y = (Math.random() - 0.5) * worldSize * 2;
+
+    world.addChild(pellet);
+    pellets.push(pellet);
+}
+
+for (let i = 0; i < pelletCount; i++) {
+    spawnPellet();
+}
+
+let score = 0;
+
+const scoreLabel = new Text({
+    text: `Score: ${score}`,
+    style: {
+        fontFamily: "Virgil",
+        fontSize: 24,
+        fill: 0x000000,
+        align: "left",
+    },
+});
+scoreLabel.position.set(app.screen.width - 150, 40);
+
+app.stage.addChild(scoreLabel);
 
 const keys = {
     w: false,
@@ -77,4 +113,27 @@ app.ticker.add(() => {
 
     world.x = -player.x + app.screen.width / 2;
     world.y = -player.y + app.screen.height / 2;
+
+    for (let i = pellets.length - 1; i >= 0; i--) {
+        const pellet = pellets[i];
+
+        const dx = player.x - pellet.x;
+        const dy = player.y - pellet.y;
+
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance < playerSize + pelletSize) {
+            score += 1;
+            scoreLabel.text = `Score: ${score}`;
+            console.log("Score: ", score);
+
+            if (score % 10 == 0) {
+                console.log("Cards!");
+            }
+
+            world.removeChild(pellet);
+            pellets.splice(i, 1);
+            spawnPellet();
+        }
+    }
 });

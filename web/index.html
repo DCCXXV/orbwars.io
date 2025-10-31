@@ -6,6 +6,21 @@
     <title>Libreta.io</title>
     <style>
         body { margin: 0; padding: 0; }
+        @font-face {
+            font-family: 'Virgil';
+            src: url('/static/fonts/Virgil.woff2') format('woff2'),
+                 url('/static/fonts/Virgil.woff') format('woff'),
+                 url('/static/fonts/Virgil.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        body::after {
+            content: '';
+            font-family: 'Virgil';
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
