@@ -1,0 +1,674 @@
+[
+    {
+        "id": 1,
+        "name": "Swift Step",
+        "description": "+20% speed",
+        "rarity": "Common",
+        "effects": [{ "stat": "speed", "modifier": 1.2 }]
+    },
+    {
+        "id": 2,
+        "name": "Iron Skin",
+        "description": "+30% health",
+        "rarity": "Common",
+        "effects": [{ "stat": "max_health", "modifier": 1.3 }]
+    },
+    {
+        "id": 3,
+        "name": "Sharp Edge",
+        "description": "+20% damage",
+        "rarity": "Common",
+        "effects": [{ "stat": "damage", "modifier": 1.2 }]
+    },
+    {
+        "id": 4,
+        "name": "Vacuum",
+        "description": "+40% absorption range",
+        "rarity": "Common",
+        "effects": [{ "stat": "absorbRange", "modifier": 1.4 }]
+    },
+    {
+        "id": 5,
+        "name": "Lightweight",
+        "description": "+25% speed, -15% size",
+        "rarity": "Common",
+        "effects": [
+            { "stat": "speed", "modifier": 1.25 },
+            { "stat": "size", "modifier": 0.85 }
+        ]
+    },
+    {
+        "id": 6,
+        "name": "Bulky",
+        "description": "+20% size, -15% speed",
+        "rarity": "Common",
+        "effects": [
+            { "stat": "size", "modifier": 1.2 },
+            { "stat": "speed", "modifier": 0.85 }
+        ]
+    },
+    {
+        "id": 7,
+        "name": "Sturdy",
+        "description": "+50% health, -10% speed",
+        "rarity": "Uncommon",
+        "effects": [
+            { "stat": "max_health", "modifier": 1.5 },
+            { "stat": "speed", "modifier": 0.9 }
+        ]
+    },
+    {
+        "id": 8,
+        "name": "Aggressive",
+        "description": "+40% damage, -15% health",
+        "rarity": "Uncommon",
+        "effects": [
+            { "stat": "damage", "modifier": 1.4 },
+            { "stat": "max_health", "modifier": 0.85 }
+        ]
+    },
+    {
+        "id": 9,
+        "name": "Nimble",
+        "description": "+35% speed, -20% size",
+        "rarity": "Uncommon",
+        "effects": [
+            { "stat": "speed", "modifier": 1.35 },
+            { "stat": "size", "modifier": 0.8 }
+        ]
+    },
+    {
+        "id": 10,
+        "name": "Hungry",
+        "description": "+60% absorption range, -10% speed",
+        "rarity": "Uncommon",
+        "effects": [
+            { "stat": "absorbRange", "modifier": 1.6 },
+            { "stat": "speed", "modifier": 0.9 }
+        ]
+    },
+    {
+        "id": 11,
+        "name": "Berserker",
+        "description": "+30% damage, +20% speed, -25% health",
+        "rarity": "Uncommon",
+        "effects": [
+            { "stat": "damage", "modifier": 1.3 },
+            { "stat": "speed", "modifier": 1.2 },
+            { "stat": "max_health", "modifier": 0.75 }
+        ]
+    },
+    {
+        "id": 12,
+        "name": "Fortified",
+        "description": "+70% health, +15% size, -25% speed",
+        "rarity": "Rare",
+        "effects": [
+            { "stat": "max_health", "modifier": 1.7 },
+            { "stat": "size", "modifier": 1.15 },
+            { "stat": "speed", "modifier": 0.75 }
+        ]
+    },
+    {
+        "id": 13,
+        "name": "Glass Cannon",
+        "description": "+60% damage, -30% health",
+        "rarity": "Rare",
+        "effects": [
+            { "stat": "damage", "modifier": 1.6 },
+            { "stat": "max_health", "modifier": 0.7 }
+        ]
+    },
+    {
+        "id": 14,
+        "name": "Speedster",
+        "description": "+50% speed, -25% size",
+        "rarity": "Rare",
+        "effects": [
+            { "stat": "speed", "modifier": 1.5 },
+            { "stat": "size", "modifier": 0.75 }
+        ]
+    },
+    {
+        "id": 15,
+        "name": "Energy Shield",
+        "description": "Gain 40 barrier with regeneration",
+        "rarity": "Rare",
+        "effects": [
+            { "stat": "max_barrier", "modifier": 40 },
+            { "stat": "barrier_regen", "modifier": 3 }
+        ]
+    },
+    {
+        "id": 16,
+        "name": "Inferno Aura",
+        "description": "Burn nearby enemies for 8 dmg/sec",
+        "rarity": "Epic",
+        "effects": [
+            {
+                "stat": "aura_add",
+                "modifier": 1,
+                "aura_type": "damage",
+                "aura_radius": 80,
+                "aura_strength": 8,
+                "aura_tick": 1.0
+            }
+        ]
+    },
+    {
+        "id": 17,
+        "name": "Frost Field",
+        "description": "Slow nearby enemies by 40%",
+        "rarity": "Epic",
+        "effects": [
+            {
+                "stat": "aura_add",
+                "modifier": 1,
+                "aura_type": "slow",
+                "aura_radius": 100,
+                "aura_strength": 0.4,
+                "aura_tick": 0.5
+            }
+        ]
+    },
+    {
+        "id": 18,
+        "name": "Poison Cloud",
+        "description": "Poison nearby enemies (5 dmg/sec for 3s)",
+        "rarity": "Epic",
+        "effects": [
+            {
+                "stat": "aura_add",
+                "modifier": 1,
+                "aura_type": "poison",
+                "aura_radius": 90,
+                "aura_strength": 5,
+                "aura_tick": 1.0
+            }
+        ]
+    },
+    {
+        "id": 19,
+        "name": "Reinforced Shield",
+        "description": "Gain 60 barrier with fast regeneration",
+        "rarity": "Epic",
+        "effects": [
+            { "stat": "max_barrier", "modifier": 60 },
+            { "stat": "barrier_regen", "modifier": 5 }
+        ]
+    },
+    {
+        "id": 20,
+        "name": "The Fool's Journey",
+        "description": "+80% speed, +50% damage, embrace chaos",
+        "rarity": "Legendary",
+        "effects": [
+            { "stat": "speed", "modifier": 1.8 },
+            { "stat": "damage", "modifier": 1.5 },
+            { "stat": "size", "modifier": 0.85 }
+        ]
+    },
+    {
+        "id": 21,
+        "name": "The Magician",
+        "description": "Master of elements. +60% damage, slow aura (30%)",
+        "rarity": "Legendary",
+        "effects": [
+            { "stat": "damage", "modifier": 1.6 },
+            { "stat": "max_health", "modifier": 1.3 },
+            {
+                "stat": "aura_add",
+                "modifier": 1,
+                "aura_type": "slow",
+                "aura_radius": 90,
+                "aura_strength": 0.3,
+                "aura_tick": 0.5
+            }
+        ]
+    },
+    {
+        "id": 22,
+        "name": "The High Priestess",
+        "description": "Divine protection. 80 barrier, lifesteal aura",
+        "rarity": "Legendary",
+        "effects": [
+            { "stat": "max_barrier", "modifier": 80 },
+            { "stat": "barrier_regen", "modifier": 8 },
+            {
+                "stat": "aura_add",
+                "modifier": 1,
+                "aura_type": "lifesteal",
+                "aura_radius": 70,
+                "aura_strength": 3,
+                "aura_tick": 1.0
+            }
+        ]
+    },
+    {
+        "id": 23,
+        "name": "The Emperor",
+        "description": "Absolute power. +100% damage, +80% health, +30% size",
+        "rarity": "Legendary",
+        "effects": [
+            { "stat": "damage", "modifier": 2.0 },
+            { "stat": "max_health", "modifier": 1.8 },
+            { "stat": "size", "modifier": 1.3 },
+            { "stat": "speed", "modifier": 0.8 }
+        ]
+    },
+    {
+        "id": 24,
+        "name": "The Chariot",
+        "description": "Unstoppable momentum. +120% speed, ramming damage",
+        "rarity": "Legendary",
+        "effects": [
+            { "stat": "speed", "modifier": 2.2 },
+            { "stat": "damage", "modifier": 1.7 },
+            { "stat": "size", "modifier": 0.75 }
+        ]
+    },
+    {
+        "id": 25,
+        "name": "The Hermit",
+        "description": "Solitary power. Massive lifesteal aura, +70% damage",
+        "rarity": "Legendary",
+        "effects": [
+            { "stat": "damage", "modifier": 1.7 },
+            { "stat": "max_health", "modifier": 1.4 },
+            {
+                "stat": "aura_add",
+                "modifier": 1,
+                "aura_type": "lifesteal",
+                "aura_radius": 100,
+                "aura_strength": 6,
+                "aura_tick": 0.5
+            }
+        ]
+    },
+    {
+        "id": 26,
+        "name": "Wheel of Fortune",
+        "description": "Fate's blessing. +60% all stats, random chance",
+        "rarity": "Legendary",
+        "effects": [
+            { "stat": "speed", "modifier": 1.6 },
+            { "stat": "damage", "modifier": 1.6 },
+            { "stat": "max_health", "modifier": 1.6 },
+            { "stat": "size", "modifier": 1.2 }
+        ]
+    },
+    {
+        "id": 27,
+        "name": "Death",
+        "description": "Transformation. Poison aura, +90% damage, +50% speed",
+        "rarity": "Legendary",
+        "effects": [
+            { "stat": "damage", "modifier": 1.9 },
+            { "stat": "speed", "modifier": 1.5 },
+            {
+                "stat": "aura_add",
+                "modifier": 1,
+                "aura_type": "poison",
+                "aura_radius": 120,
+                "aura_strength": 10,
+                "aura_tick": 0.5
+            },
+            { "stat": "max_health", "modifier": 0.8 }
+        ]
+    },
+    {
+        "id": 28,
+        "name": "The Devil",
+        "description": "Dark pact. Triple damage aura, sacrifice health",
+        "rarity": "Legendary",
+        "effects": [
+            { "stat": "damage", "modifier": 2.5 },
+            {
+                "stat": "aura_add",
+                "modifier": 1,
+                "aura_type": "damage",
+                "aura_radius": 110,
+                "aura_strength": 15,
+                "aura_tick": 1.0
+            },
+            { "stat": "max_health", "modifier": 0.6 }
+        ]
+    },
+    {
+        "id": 29,
+        "name": "The Tower",
+        "description": "Catastrophic power. Massive burn aura, +80% size",
+        "rarity": "Legendary",
+        "effects": [
+            { "stat": "size", "modifier": 1.8 },
+            { "stat": "damage", "modifier": 1.6 },
+            { "stat": "max_health", "modifier": 1.7 },
+            {
+                "stat": "aura_add",
+                "modifier": 1,
+                "aura_type": "damage",
+                "aura_radius": 140,
+                "aura_strength": 12,
+                "aura_tick": 1.0
+            },
+            { "stat": "speed", "modifier": 0.5 }
+        ]
+    },
+    {
+        "id": 30,
+        "name": "The Star",
+        "description": "Hope eternal. Large barrier and regeneration",
+        "rarity": "Legendary",
+        "effects": [
+            { "stat": "max_barrier", "modifier": 100 },
+            { "stat": "barrier_regen", "modifier": 10 },
+            { "stat": "max_health", "modifier": 1.5 },
+            { "stat": "speed", "modifier": 1.3 }
+        ]
+    },
+    {
+        "id": 31,
+        "name": "The World",
+        "description": "Completion. All auras, +50% all stats",
+        "rarity": "Legendary",
+        "effects": [
+            { "stat": "speed", "modifier": 1.5 },
+            { "stat": "damage", "modifier": 1.5 },
+            { "stat": "max_health", "modifier": 1.5 },
+            { "stat": "size", "modifier": 1.2 },
+            {
+                "stat": "aura_add",
+                "modifier": 1,
+                "aura_type": "damage",
+                "aura_radius": 80,
+                "aura_strength": 6,
+                "aura_tick": 1.0
+            },
+            {
+                "stat": "aura_add",
+                "modifier": 1,
+                "aura_type": "slow",
+                "aura_radius": 80,
+                "aura_strength": 0.25,
+                "aura_tick": 0.5
+            },
+            {
+                "stat": "aura_add",
+                "modifier": 1,
+                "aura_type": "lifesteal",
+                "aura_radius": 80,
+                "aura_strength": 3,
+                "aura_tick": 1.0
+            }
+        ]
+    },
+    {
+        "id": 40,
+        "name": "Aries Ascendant",
+        "description": "Ram's fury. +70% damage, +60% speed, aggressive",
+        "rarity": "Epic",
+        "effects": [
+            { "stat": "damage", "modifier": 1.7 },
+            { "stat": "speed", "modifier": 1.6 },
+            { "stat": "max_health", "modifier": 0.85 }
+        ]
+    },
+    {
+        "id": 41,
+        "name": "Taurus Rising",
+        "description": "Bull's endurance. +100% health, +40% size, slow",
+        "rarity": "Epic",
+        "effects": [
+            { "stat": "max_health", "modifier": 2.0 },
+            { "stat": "size", "modifier": 1.4 },
+            { "stat": "speed", "modifier": 0.7 }
+        ]
+    },
+    {
+        "id": 42,
+        "name": "Gemini Duality",
+        "description": "Twin souls. +40% speed, +40% damage, balanced",
+        "rarity": "Epic",
+        "effects": [
+            { "stat": "speed", "modifier": 1.4 },
+            { "stat": "damage", "modifier": 1.4 },
+            { "stat": "max_health", "modifier": 1.2 }
+        ]
+    },
+    {
+        "id": 43,
+        "name": "Cancer's Shell",
+        "description": "Protective carapace. 50 barrier, +50% health",
+        "rarity": "Epic",
+        "effects": [
+            { "stat": "max_barrier", "modifier": 50 },
+            { "stat": "barrier_regen", "modifier": 4 },
+            { "stat": "max_health", "modifier": 1.5 }
+        ]
+    },
+    {
+        "id": 44,
+        "name": "Leo's Roar",
+        "description": "Regal presence. Damage aura, +50% damage",
+        "rarity": "Epic",
+        "effects": [
+            { "stat": "damage", "modifier": 1.5 },
+            {
+                "stat": "aura_add",
+                "modifier": 1,
+                "aura_type": "damage",
+                "aura_radius": 90,
+                "aura_strength": 7,
+                "aura_tick": 1.0
+            },
+            { "stat": "size", "modifier": 1.15 }
+        ]
+    },
+    {
+        "id": 45,
+        "name": "Virgo's Precision",
+        "description": "Perfect execution. +55% damage, +35% speed",
+        "rarity": "Epic",
+        "effects": [
+            { "stat": "damage", "modifier": 1.55 },
+            { "stat": "speed", "modifier": 1.35 },
+            { "stat": "size", "modifier": 0.9 }
+        ]
+    },
+    {
+        "id": 46,
+        "name": "Libra Balance",
+        "description": "Perfect harmony. +35% all stats",
+        "rarity": "Epic",
+        "effects": [
+            { "stat": "speed", "modifier": 1.35 },
+            { "stat": "damage", "modifier": 1.35 },
+            { "stat": "max_health", "modifier": 1.35 },
+            { "stat": "size", "modifier": 1.1 }
+        ]
+    },
+    {
+        "id": 47,
+        "name": "Scorpio Sting",
+        "description": "Deadly venom. Powerful poison aura",
+        "rarity": "Epic",
+        "effects": [
+            { "stat": "damage", "modifier": 1.4 },
+            {
+                "stat": "aura_add",
+                "modifier": 1,
+                "aura_type": "poison",
+                "aura_radius": 85,
+                "aura_strength": 8,
+                "aura_tick": 0.5
+            }
+        ]
+    },
+    {
+        "id": 48,
+        "name": "Sagittarius Arrow",
+        "description": "Swift hunter. +80% speed, +40% damage",
+        "rarity": "Epic",
+        "effects": [
+            { "stat": "speed", "modifier": 1.8 },
+            { "stat": "damage", "modifier": 1.4 },
+            { "stat": "size", "modifier": 0.85 }
+        ]
+    },
+    {
+        "id": 49,
+        "name": "Capricorn's Ambition",
+        "description": "Steadfast climb. +60% health, lifesteal aura",
+        "rarity": "Epic",
+        "effects": [
+            { "stat": "max_health", "modifier": 1.6 },
+            {
+                "stat": "aura_add",
+                "modifier": 1,
+                "aura_type": "lifesteal",
+                "aura_radius": 75,
+                "aura_strength": 4,
+                "aura_tick": 1.0
+            }
+        ]
+    },
+    {
+        "id": 50,
+        "name": "Aquarius Flow",
+        "description": "Water bearer. Slow aura, +50% speed",
+        "rarity": "Epic",
+        "effects": [
+            { "stat": "speed", "modifier": 1.5 },
+            {
+                "stat": "aura_add",
+                "modifier": 1,
+                "aura_type": "slow",
+                "aura_radius": 95,
+                "aura_strength": 0.35,
+                "aura_tick": 0.5
+            },
+            { "stat": "max_health", "modifier": 1.2 }
+        ]
+    },
+    {
+        "id": 51,
+        "name": "Pisces Dreams",
+        "description": "Mystic waters. Multiple weak auras",
+        "rarity": "Epic",
+        "effects": [
+            {
+                "stat": "aura_add",
+                "modifier": 1,
+                "aura_type": "slow",
+                "aura_radius": 70,
+                "aura_strength": 0.2,
+                "aura_tick": 0.5
+            },
+            {
+                "stat": "aura_add",
+                "modifier": 1,
+                "aura_type": "poison",
+                "aura_radius": 70,
+                "aura_strength": 4,
+                "aura_tick": 1.0
+            },
+            { "stat": "max_health", "modifier": 1.3 }
+        ]
+    },
+    {
+        "id": 100,
+        "name": "Berserker's Rage I",
+        "description": "+10% damage (Part 1/3)",
+        "rarity": "Common",
+        "set": "Berserker Set",
+        "effects": [{ "stat": "damage", "modifier": 1.1 }]
+    },
+    {
+        "id": 101,
+        "name": "Berserker's Rage II",
+        "description": "+10% damage (Part 2/3)",
+        "rarity": "Uncommon",
+        "set": "Berserker Set",
+        "effects": [{ "stat": "damage", "modifier": 1.1 }]
+    },
+    {
+        "id": 102,
+        "name": "Berserker's Rage III",
+        "description": "+10% damage (Part 3/3)",
+        "rarity": "Rare",
+        "set": "Berserker Set",
+        "effects": [{ "stat": "damage", "modifier": 1.1 }]
+    },
+    {
+        "id": 103,
+        "name": "Guardian's Shield I",
+        "description": "+15% health (Part 1/3)",
+        "rarity": "Common",
+        "set": "Guardian Set",
+        "effects": [{ "stat": "max_health", "modifier": 1.15 }]
+    },
+    {
+        "id": 104,
+        "name": "Guardian's Shield II",
+        "description": "+15% health (Part 2/3)",
+        "rarity": "Uncommon",
+        "set": "Guardian Set",
+        "effects": [{ "stat": "max_health", "modifier": 1.15 }]
+    },
+    {
+        "id": 105,
+        "name": "Guardian's Shield III",
+        "description": "+15% health (Part 3/3)",
+        "rarity": "Rare",
+        "set": "Guardian Set",
+        "effects": [{ "stat": "max_health", "modifier": 1.15 }]
+    },
+    {
+        "id": 106,
+        "name": "Toxic Touch I",
+        "description": "+5% damage (Part 1/3)",
+        "rarity": "Common",
+        "set": "Toxic Set",
+        "effects": [{ "stat": "damage", "modifier": 1.05 }]
+    },
+    {
+        "id": 107,
+        "name": "Toxic Touch II",
+        "description": "+5% damage (Part 2/3)",
+        "rarity": "Uncommon",
+        "set": "Toxic Set",
+        "effects": [{ "stat": "damage", "modifier": 1.05 }]
+    },
+    {
+        "id": 108,
+        "name": "Toxic Touch III",
+        "description": "+5% damage (Part 3/3)",
+        "rarity": "Rare",
+        "set": "Toxic Set",
+        "effects": [{ "stat": "damage", "modifier": 1.05 }]
+    },
+    {
+        "id": 109,
+        "name": "Blood Hunger I",
+        "description": "+10% health (Part 1/3)",
+        "rarity": "Common",
+        "set": "Vampire Set",
+        "effects": [{ "stat": "max_health", "modifier": 1.1 }]
+    },
+    {
+        "id": 110,
+        "name": "Blood Hunger II",
+        "description": "+10% health (Part 2/3)",
+        "rarity": "Uncommon",
+        "set": "Vampire Set",
+        "effects": [{ "stat": "max_health", "modifier": 1.1 }]
+    },
+    {
+        "id": 111,
+        "name": "Blood Hunger III",
+        "description": "+10% health (Part 3/3)",
+        "rarity": "Rare",
+        "set": "Vampire Set",
+        "effects": [{ "stat": "max_health", "modifier": 1.1 }]
+    }
+]
