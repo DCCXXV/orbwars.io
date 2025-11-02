@@ -33,7 +33,7 @@ type GameStateMessage struct {
 type AuraDTO struct {
 	Type     string  `json:"type"`
 	Radius   float64 `json:"radius"`
-	Strength float64 `json:"strength"`
+	Strength int     `json:"strength"`
 }
 
 type ActiveEffectDTO struct {
@@ -45,14 +45,14 @@ type PlayerDTO struct {
 	ID            string            `json:"id"`
 	X             float64           `json:"x"`
 	Y             float64           `json:"y"`
-	Size          float64           `json:"size"`
-	Speed         float64           `json:"speed"`
+	Size          int               `json:"size"`
+	Speed         int               `json:"speed"`
 	Score         int               `json:"score"`
-	Health        float64           `json:"health"`
-	MaxHealth     float64           `json:"max_health"`
-	Damage        float64           `json:"damage"`
-	Barrier       float64           `json:"barrier"`
-	MaxBarrier    float64           `json:"max_barrier"`
+	Health        int               `json:"health"`
+	MaxHealth     int               `json:"max_health"`
+	Damage        int               `json:"damage"`
+	Barrier       int               `json:"barrier"`
+	MaxBarrier    int               `json:"max_barrier"`
 	NextCardScore int               `json:"next_card_score"`
 	CardsPending  bool              `json:"cards_pending"`
 	AppliedCards  []string          `json:"applied_cards"`

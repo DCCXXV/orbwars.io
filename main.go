@@ -23,7 +23,7 @@ var upgrader = websocket.Upgrader{
 }
 
 func main() {
-	runtime.GOMAXPROCS(runtime.NumCPU())
+	runtime.GOMAXPROCS(2)
 
 	if err := game.LoadCards("./cards.json"); err != nil {
 		log.Fatal("Error when loading cards:", err)
@@ -76,14 +76,13 @@ func handleWebSocket(hub *realtime.Hub, w http.ResponseWriter, r *http.Request) 
 	}
 
 	hub.Register <- client
-	log.Printf("Client connected: %s", clientID)
 
 	go client.WritePump()
 	go client.ReadPump()
 }
 
 func startGameLoop(world *game.World) {
-	ticker := time.NewTicker(16 * time.Millisecond)
+	ticker := time.NewTicker(time.Second / 60)
 	defer ticker.Stop()
 
 	lastTime := time.Now()
@@ -98,7 +97,7 @@ func startGameLoop(world *game.World) {
 }
 
 func startBroadcasting(hub *realtime.Hub) {
-	ticker := time.NewTicker(time.Second / 30)
+	ticker := time.NewTicker(time.Second / 60)
 	defer ticker.Stop()
 
 	for range ticker.C {

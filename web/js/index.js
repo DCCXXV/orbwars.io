@@ -10,7 +10,6 @@ import { Renderer } from "./renderer.js";
         antialias: true,
         resolution: window.devicePixelRatio || 1,
         autoDensity: true,
-        preference: "webgpu",
     });
     document.body.appendChild(app.canvas);
     console.log("Canvas created:", app.canvas);

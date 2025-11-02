@@ -11,16 +11,20 @@ type World struct {
 	Pellets   map[string]*Pellet
 	WorldSize float64
 	Mu        sync.RWMutex
+
+	playerSlice []*Player
 }
 
 func NewWorld(worldSize float64) *World {
 	world := &World{
-		Players:   make(map[string]*Player),
-		Pellets:   make(map[string]*Pellet),
-		WorldSize: worldSize,
+		Players:     make(map[string]*Player),
+		Pellets:     make(map[string]*Pellet),
+		WorldSize:   worldSize,
+		playerSlice: make([]*Player, 0, 100),
 	}
 
-	for range int(worldSize / 2) {
+	pelletCount := int(worldSize / 2)
+	for i := 0; i < pelletCount; i++ {
 		world.SpawnPellet()
 	}
 
@@ -45,10 +49,11 @@ func (w *World) RemovePlayer(id string) {
 }
 
 func (w *World) SetPlayerInput(id string, input PlayerInput) {
-	w.Mu.Lock()
-	defer w.Mu.Unlock()
+	w.Mu.RLock()
+	player, ok := w.Players[id]
+	w.Mu.RUnlock()
 
-	if player, ok := w.Players[id]; ok {
+	if ok {
 		player.SetInput(input)
 	}
 }
@@ -57,58 +62,59 @@ func (w *World) Update(deltaTime float64) {
 	w.Mu.Lock()
 	defer w.Mu.Unlock()
 
-	for _, player := range w.Players {
-		if player.IsAlive() {
-			player.Update(deltaTime)
-			w.clampPlayer(player)
-		}
-	}
-
-	alivePlayers := make([]*Player, 0, len(w.Players))
+	w.playerSlice = w.playerSlice[:0]
 	for _, p := range w.Players {
 		if p.IsAlive() {
-			alivePlayers = append(alivePlayers, p)
+			p.Update(deltaTime)
+			w.clampPlayer(p)
+			w.playerSlice = append(w.playerSlice, p)
 		}
 	}
 
-	for _, player := range alivePlayers {
-		player.UpdateAuras(deltaTime, alivePlayers)
+	for _, player := range w.playerSlice {
+		if len(player.Auras) > 0 {
+			player.UpdateAuras(deltaTime, w.playerSlice)
+		}
 	}
 
 	w.checkPvPCollisions()
+	w.checkPelletCollisions()
+}
 
-	for _, player := range w.Players {
-		if !player.IsAlive() {
-			continue
-		}
-
+func (w *World) checkPelletCollisions() {
+	for _, player := range w.playerSlice {
 		for pelletID, pellet := range w.Pellets {
 			if player.CanEatPellet(pellet) {
 				player.Score += pellet.Value
 				if player.Health < player.MaxHealth {
-					player.Health += float64(pellet.Value)
+					player.Health += pellet.Value
+					if player.Health > player.MaxHealth {
+						player.Health = player.MaxHealth
+					}
 				}
 				delete(w.Pellets, pelletID)
 				w.SpawnPellet()
+				break
 			}
 		}
 	}
 }
 
 func (w *World) checkPvPCollisions() {
-	players := make([]*Player, 0, len(w.Players))
-	for _, p := range w.Players {
-		if p.IsAlive() {
-			players = append(players, p)
+	playerCount := len(w.playerSlice)
+	for i := 0; i < playerCount; i++ {
+		p1 := w.playerSlice[i]
+		if p1.CollisionCooldown > 0 {
+			continue
 		}
-	}
 
-	for i := 0; i < len(players); i++ {
-		for j := i + 1; j < len(players); j++ {
-			p1 := players[i]
-			p2 := players[j]
+		for j := i + 1; j < playerCount; j++ {
+			p2 := w.playerSlice[j]
+			if p2.CollisionCooldown > 0 {
+				continue
+			}
 
-			if p1.IsCollidingWith(p2) && p1.CollisionCooldown <= 0 && p2.CollisionCooldown <= 0 {
+			if p1.IsCollidingWith(p2) {
 				p1Died := p1.TakeDamage(p2.Damage)
 				p2Died := p2.TakeDamage(p1.Damage)
 
@@ -116,38 +122,44 @@ func (w *World) checkPvPCollisions() {
 				p2.CollisionCooldown = 0.5
 
 				if p1Died {
-					p2.Score += p1.Score
-					p2.Speed += p2.Speed * 0.1
-					p2.Damage += p2.Damage * 0.1
-					p2.MaxHealth += p2.MaxHealth * 0.1
-					p2.Health = p2.MaxHealth
-					p2.Size += p2.Size * 0.1
-
-					x := rand.Float64()*w.WorldSize - w.WorldSize/2
-					y := rand.Float64()*w.WorldSize - w.WorldSize/2
-					p1.Respawn(x, y)
+					w.handlePlayerDeath(p1, p2)
 				}
 				if p2Died {
-					p1.Score += p2.Score
-					p1.Speed += p1.Speed * 0.1
-					p1.Damage += p1.Damage * 0.1
-					p1.MaxHealth += p1.MaxHealth * 0.1
-					p1.Health = p1.MaxHealth
-					p1.Size += p1.Size * 0.1
-
-					x := rand.Float64()*w.WorldSize - w.WorldSize/2
-					y := rand.Float64()*w.WorldSize - w.WorldSize/2
-					p2.Respawn(x, y)
+					w.handlePlayerDeath(p2, p1)
 				}
 			}
 		}
 	}
 }
 
+func (w *World) handlePlayerDeath(dead *Player, killer *Player) {
+	killer.Score += dead.Score
+	killer.Speed += killer.Speed / 10
+	killer.Damage += killer.Damage / 10
+	killer.MaxHealth += killer.MaxHealth / 10
+	killer.Health = killer.MaxHealth
+	killer.Size += killer.Size / 10
+
+	x := rand.Float64()*w.WorldSize - w.WorldSize/2
+	y := rand.Float64()*w.WorldSize - w.WorldSize/2
+	dead.Respawn(x, y)
+}
+
 func (w *World) clampPlayer(p *Player) {
-	radius := p.Size
-	p.X = max(-w.WorldSize/2+radius, min(w.WorldSize/2-radius, p.X))
-	p.Y = max(-w.WorldSize/2+radius, min(w.WorldSize/2-radius, p.Y))
+	radius := float64(p.Size)
+	halfWorld := w.WorldSize / 2
+
+	if p.X < -halfWorld+radius {
+		p.X = -halfWorld + radius
+	} else if p.X > halfWorld-radius {
+		p.X = halfWorld - radius
+	}
+
+	if p.Y < -halfWorld+radius {
+		p.Y = -halfWorld + radius
+	} else if p.Y > halfWorld-radius {
+		p.Y = halfWorld - radius
+	}
 }
 
 func (w *World) SpawnPellet() {
@@ -171,18 +183,4 @@ func (w *World) Run(tickRate time.Duration) {
 
 		w.Update(deltaTime)
 	}
-}
-
-func max(a, b float64) float64 {
-	if a > b {
-		return a
-	}
-	return b
-}
-
-func min(a, b float64) float64 {
-	if a < b {
-		return a
-	}
-	return b
 }

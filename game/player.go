@@ -10,17 +10,17 @@ type Player struct {
 	VelocityX float64
 	VelocityY float64
 
-	Size        float64
-	Speed       float64
-	TargetSpeed float64
-	BaseSpeed   float64
-	Health      float64
-	MaxHealth   float64
-	Damage      float64
+	Size        int
+	Speed       int
+	TargetSpeed int
+	BaseSpeed   int
+	Health      int
+	MaxHealth   int
+	Damage      int
 
-	Barrier             float64
-	MaxBarrier          float64
-	BarrierRegen        float64
+	Barrier             int
+	MaxBarrier          int
+	BarrierRegen        int
 	BarrierRegenDelay   float64
 	TimeSinceBarrierHit float64
 
@@ -53,14 +53,14 @@ type PlayerInput struct {
 type Aura struct {
 	Type     string
 	Radius   float64
-	Strength float64
+	Strength int
 	TickRate float64
 	LastTick float64
 }
 
 type ActiveEffect struct {
 	Type      string
-	Strength  float64
+	Strength  int
 	Duration  float64
 	Remaining float64
 	TickRate  float64
@@ -88,7 +88,7 @@ func NewPlayer(id string, x, y float64) *Player {
 		AbsorptionRange:     1.0,
 		Score:               0,
 		NextCardScore:       10,
-		AppliedCards:        []string{},
+		AppliedCards:        make([]string, 0, 10),
 		CardsPending:        false,
 		CollisionCooldown:   0,
 		Auras:               []Aura{},
@@ -102,12 +102,16 @@ func NewPlayer(id string, x, y float64) *Player {
 func (p *Player) Update(deltaTime float64) {
 	if p.CollisionCooldown > 0 {
 		p.CollisionCooldown -= deltaTime
+		if p.CollisionCooldown < 0 {
+			p.CollisionCooldown = 0
+		}
 	}
 
 	if p.SlowDuration > 0 {
 		p.SlowDuration -= deltaTime
 		if p.SlowDuration <= 0 {
 			p.SlowEffect = 0
+			p.SlowDuration = 0
 		}
 	}
 
@@ -117,7 +121,8 @@ func (p *Player) Update(deltaTime float64) {
 		p.TimeSinceBarrierHit += deltaTime
 
 		if p.TimeSinceBarrierHit >= p.BarrierRegenDelay {
-			p.Barrier += p.BarrierRegen * deltaTime
+			regenAmount := int(float64(p.BarrierRegen) * deltaTime)
+			p.Barrier += regenAmount
 			if p.Barrier > p.MaxBarrier {
 				p.Barrier = p.MaxBarrier
 			}
@@ -125,16 +130,25 @@ func (p *Player) Update(deltaTime float64) {
 	}
 
 	speedDiff := p.TargetSpeed - p.Speed
-	if math.Abs(speedDiff) > 0.1 {
-		p.Speed += speedDiff * 0.15
-	} else {
-		p.Speed = p.TargetSpeed
+	if speedDiff != 0 {
+		change := int(float64(speedDiff) * 0.15)
+		if change == 0 {
+			if speedDiff > 0 {
+				change = 1
+			} else {
+				change = -1
+			}
+		}
+		p.Speed += change
+		if (speedDiff > 0 && p.Speed > p.TargetSpeed) || (speedDiff < 0 && p.Speed < p.TargetSpeed) {
+			p.Speed = p.TargetSpeed
+		}
 	}
 
 	targetVelX := 0.0
 	targetVelY := 0.0
 
-	effectiveSpeed := p.Speed * (1.0 - p.SlowEffect)
+	effectiveSpeed := float64(p.Speed) * (1.0 - p.SlowEffect)
 
 	if p.Input.W {
 		targetVelY -= effectiveSpeed
@@ -166,9 +180,6 @@ func (p *Player) Update(deltaTime float64) {
 
 	p.X += p.VelocityX
 	p.Y += p.VelocityY
-
-	p.X = math.Round(p.X*100) / 100
-	p.Y = math.Round(p.Y*100) / 100
 }
 
 func (p *Player) UpdateAuras(deltaTime float64, nearbyPlayers []*Player) {
@@ -176,7 +187,9 @@ func (p *Player) UpdateAuras(deltaTime float64, nearbyPlayers []*Player) {
 		p.Auras[i].LastTick += deltaTime
 
 		if p.Auras[i].LastTick >= p.Auras[i].TickRate {
-			p.Auras[i].LastTick = 0
+			p.Auras[i].LastTick -= p.Auras[i].TickRate
+
+			radiusSq := (p.Auras[i].Radius + float64(p.Size)) * (p.Auras[i].Radius + float64(p.Size))
 
 			for _, target := range nearbyPlayers {
 				if target.ID == p.ID {
@@ -185,9 +198,9 @@ func (p *Player) UpdateAuras(deltaTime float64, nearbyPlayers []*Player) {
 
 				dx := p.X - target.X
 				dy := p.Y - target.Y
-				distance := math.Sqrt(dx*dx + dy*dy)
+				distanceSq := dx*dx + dy*dy
 
-				if distance <= p.Auras[i].Radius+p.Size {
+				if distanceSq <= radiusSq {
 					p.ApplyAuraEffect(&p.Auras[i], target)
 				}
 			}
@@ -200,23 +213,23 @@ func (p *Player) ApplyAuraEffect(aura *Aura, target *Player) {
 	case "damage":
 		target.TakeDamage(aura.Strength)
 	case "slow":
-		if target.SlowEffect < aura.Strength {
-			target.SlowEffect = aura.Strength
+		strength := float64(aura.Strength) / 100.0
+		if target.SlowEffect < strength {
+			target.SlowEffect = strength
 			target.SlowDuration = aura.TickRate * 2
 		}
 	case "poison":
 		target.AddDoT("poison", aura.Strength, 3.0, p.ID)
 	case "lifesteal":
-		damageDealt := aura.Strength
-		target.TakeDamage(damageDealt)
-		p.Health += damageDealt
+		target.TakeDamage(aura.Strength)
+		p.Health += aura.Strength
 		if p.Health > p.MaxHealth {
 			p.Health = p.MaxHealth
 		}
 	}
 }
 
-func (p *Player) AddDoT(dotType string, strength float64, duration float64, sourceID string) {
+func (p *Player) AddDoT(dotType string, strength int, duration float64, sourceID string) {
 	for i := range p.ActiveEffects {
 		if p.ActiveEffects[i].Type == dotType && p.ActiveEffects[i].SourceID == sourceID {
 			p.ActiveEffects[i].Remaining = duration
@@ -237,18 +250,20 @@ func (p *Player) AddDoT(dotType string, strength float64, duration float64, sour
 }
 
 func (p *Player) UpdateActiveEffects(deltaTime float64) {
-	for i := len(p.ActiveEffects) - 1; i >= 0; i-- {
+	i := 0
+	for i < len(p.ActiveEffects) {
 		effect := &p.ActiveEffects[i]
 		effect.Remaining -= deltaTime
 		effect.LastTick += deltaTime
 
 		if effect.Remaining <= 0 {
-			p.ActiveEffects = append(p.ActiveEffects[:i], p.ActiveEffects[i+1:]...)
+			p.ActiveEffects[i] = p.ActiveEffects[len(p.ActiveEffects)-1]
+			p.ActiveEffects = p.ActiveEffects[:len(p.ActiveEffects)-1]
 			continue
 		}
 
 		if effect.LastTick >= effect.TickRate {
-			effect.LastTick = 0
+			effect.LastTick -= effect.TickRate
 
 			switch effect.Type {
 			case "poison":
@@ -262,6 +277,7 @@ func (p *Player) UpdateActiveEffects(deltaTime float64) {
 				}
 			}
 		}
+		i++
 	}
 }
 
@@ -285,16 +301,13 @@ func (p *Player) SetInput(input PlayerInput) {
 func (p *Player) ApplyCardEffect(effect CardEffect) {
 	switch effect.Stat {
 	case "speed":
-		p.TargetSpeed *= effect.Modifier
-		p.TargetSpeed = math.Round(p.TargetSpeed)
+		p.TargetSpeed = int(float64(p.TargetSpeed) * effect.Modifier)
 	case "size":
-		p.Size *= effect.Modifier
+		p.Size = int(float64(p.Size) * effect.Modifier)
 	case "damage":
-		p.Damage *= effect.Modifier
-		p.Damage = math.Round(p.Damage)
+		p.Damage = int(float64(p.Damage) * effect.Modifier)
 	case "max_health":
-		p.MaxHealth *= effect.Modifier
-		p.MaxHealth = math.Round(p.MaxHealth)
+		p.MaxHealth = int(float64(p.MaxHealth) * effect.Modifier)
 		p.Health = p.MaxHealth
 	case "absorbRange":
 		p.AbsorptionRange *= effect.Modifier
@@ -302,41 +315,37 @@ func (p *Player) ApplyCardEffect(effect CardEffect) {
 		p.Auras = append(p.Auras, Aura{
 			Type:     effect.AuraType,
 			Radius:   effect.AuraRadius,
-			Strength: effect.AuraStrength,
+			Strength: int(effect.AuraStrength),
 			TickRate: effect.AuraTick,
 			LastTick: 0,
 		})
 	case "max_barrier":
-		p.MaxBarrier += effect.Modifier
+		p.MaxBarrier += int(effect.Modifier)
 		p.Barrier = p.MaxBarrier
 	case "barrier_regen":
-		p.BarrierRegen += effect.Modifier
+		p.BarrierRegen += int(effect.Modifier)
 	}
 }
 
 func (p *Player) CanEatPellet(pellet *Pellet) bool {
 	dx := p.X - pellet.X
 	dy := p.Y - pellet.Y
-	distance := dx*dx + dy*dy
+	distanceSq := dx*dx + dy*dy
 
-	captureRange := (p.Size + pellet.Size) * p.AbsorptionRange
-	return distance < captureRange*captureRange
+	captureRange := (float64(p.Size) + pellet.Size) * p.AbsorptionRange
+	return distanceSq < captureRange*captureRange
 }
 
 func (p *Player) IsCollidingWith(other *Player) bool {
-	if p.ID == other.ID {
-		return false
-	}
-
 	dx := p.X - other.X
 	dy := p.Y - other.Y
-	distance := dx*dx + dy*dy
+	distanceSq := dx*dx + dy*dy
 
-	minDist := p.Size + other.Size
-	return distance <= minDist*minDist
+	minDist := float64(p.Size + other.Size)
+	return distanceSq <= minDist*minDist
 }
 
-func (p *Player) TakeDamage(damage float64) bool {
+func (p *Player) TakeDamage(damage int) bool {
 	if p.Barrier > 0 {
 		p.TimeSinceBarrierHit = 0
 
@@ -372,9 +381,9 @@ func (p *Player) Respawn(x, y float64) {
 	p.CollisionCooldown = 0
 	p.NextCardScore = 10
 	p.CardsPending = false
-	p.AppliedCards = []string{}
-	p.Auras = []Aura{}
-	p.ActiveEffects = []ActiveEffect{}
+	p.AppliedCards = p.AppliedCards[:0]
+	p.Auras = p.Auras[:0]
+	p.ActiveEffects = p.ActiveEffects[:0]
 	p.Barrier = 0
 	p.MaxBarrier = 0
 	p.BarrierRegen = 0
@@ -382,7 +391,9 @@ func (p *Player) Respawn(x, y float64) {
 	p.TimeSinceBarrierHit = 0
 	p.SlowEffect = 0
 	p.SlowDuration = 0
-	p.SetBonuses = make(map[string]int)
+	for k := range p.SetBonuses {
+		delete(p.SetBonuses, k)
+	}
 }
 
 func (p *Player) IsAlive() bool {
