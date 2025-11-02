@@ -51,7 +51,6 @@ export class Renderer {
                 const healthBarBg = new Graphics();
                 const healthBarFill = new Graphics();
                 const healthBarTiers = new Graphics();
-                s;
                 const auraGraphics = new Graphics();
 
                 container.addChild(auraGraphics);

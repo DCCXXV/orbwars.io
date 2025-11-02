@@ -8,10 +8,22 @@ export class NetworkManager {
     }
 
     connect() {
-        this.ws = new WebSocket("ws://localhost:6767/ws");
+        const protocol = location.protocol === "https:" ? "wss" : "ws";
+
+        const host = location.hostname;
+        const port =
+            location.hostname === "localhost" ||
+            location.hostname === "127.0.0.1"
+                ? 6767
+                : location.port || 443;
+
+        const url = `${protocol}://${host}:${port}/ws`;
+        console.log("[WS] Connecting to", url);
+
+        this.ws = new WebSocket(url);
 
         this.ws.onopen = () => {
-            console.log("conected to server");
+            console.log("connected to server");
             this.connected = true;
         };
 
@@ -25,10 +37,9 @@ export class NetworkManager {
         };
 
         this.ws.onclose = () => {
-            console.log("disconected from server");
+            console.log("disconnected from server");
             this.connected = false;
             this.myPlayerID = null;
-
             setTimeout(() => this.connect(), 3000);
         };
     }

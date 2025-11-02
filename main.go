@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"runtime"
 	"time"
 
 	"github.com/DCCXXV/orbwars.io/game"
@@ -22,6 +23,8 @@ var upgrader = websocket.Upgrader{
 }
 
 func main() {
+	runtime.GOMAXPROCS(runtime.NumCPU())
+
 	if err := game.LoadCards("./cards.json"); err != nil {
 		log.Fatal("Error when loading cards:", err)
 	}
